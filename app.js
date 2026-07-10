@@ -29,8 +29,15 @@ const mockLogs = [];
 function initApp() {
     const isResetFresh = localStorage.getItem('bisicab_reset_fresh_v2');
     if (!isResetFresh) {
-        state.bikes = [];
-        state.logs = [];
+        state.bikes = [
+            { id: 'b_demo1', model: '1', status: 'Kullanılabilir', desc: 'Günlük kullanım için standart bisiklet' },
+            { id: 'b_demo2', model: '2', status: 'Bakımda', desc: 'Bakım sırası bekliyor' },
+            { id: 'b_demo3', model: '3', status: 'Arızalı', desc: 'Vites ve fren bakımı gerekli' },
+        ];
+        state.logs = [
+            { id: 'l_demo1', bikeId: 'b_demo3', title: 'Vites geçişleri sorunlu', desc: 'Özellikle 2-3 vites arası zor geçiyor', priority: 'Orta', status: 'Bildirildi', reporter: 'Demo Kullanıcı', date: new Date().toISOString(), resolveNotes: '', resolveCost: null, resolveDate: null },
+            { id: 'l_demo2', bikeId: 'b_demo2', title: 'Ön fren çalışmıyor', desc: 'Fren teli kopmuş', priority: 'Yuksek', status: 'Onariliyor', reporter: 'Demo Kullanıcı', date: new Date(Date.now() - 86400000).toISOString(), resolveNotes: '', resolveCost: null, resolveDate: null },
+        ];
         state.issueTitles = [...defaultIssueTitles];
         saveToLocalStorage();
         localStorage.setItem('bisicab_reset_fresh_v2', 'true');
@@ -106,6 +113,8 @@ function openModal(modalId) {
     const modal = document.getElementById(modalId);
     if (modal) {
         modal.classList.add('active-modal');
+        const firstFocusable = modal.querySelector('input, select, textarea, button, [tabindex]:not([tabindex="-1"])');
+        if (firstFocusable) setTimeout(() => firstFocusable.focus(), 100);
     }
 }
 
@@ -115,6 +124,30 @@ function closeModal(modalId) {
         modal.classList.remove('active-modal');
     }
 }
+
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        const activeModal = document.querySelector('.modal-overlay.active-modal');
+        if (activeModal) closeModal(activeModal.id);
+    }
+});
+
+document.querySelectorAll('.modal-overlay').forEach(modal => {
+    modal.addEventListener('keydown', (e) => {
+        if (e.key !== 'Tab') return;
+        const focusable = modal.querySelectorAll('input, select, textarea, button, [tabindex]:not([tabindex="-1"])');
+        if (focusable.length === 0) return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+            e.preventDefault();
+            last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+            e.preventDefault();
+            first.focus();
+        }
+    });
+});
 
 // UI Rendering Functions
 function renderAll() {
@@ -228,11 +261,25 @@ function renderBikesGrid() {
     filteredBikes.sort((a, b) => parseInt(a.model) - parseInt(b.model));
     
     if (filteredBikes.length === 0) {
+        const isFiltered = document.querySelector('#bisikletler-section .filter-btn[data-filter].active').dataset.filter !== 'all' || searchQuery !== '';
         container.innerHTML = `
             <div class="empty-state" style="grid-column: 1 / -1;">
-                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
-                <h3>Bisiklet Bulunamadı</h3>
-                <p>Arama veya filtre kriterlerinize uygun bisiklet kaydı bulunmuyor.</p>
+                <svg viewBox="0 0 100 100">
+                    <circle cx="30" cy="65" r="18" />
+                    <circle cx="70" cy="65" r="18" />
+                    <line x1="30" y1="65" x2="48" y2="42" />
+                    <line x1="48" y1="42" x2="68" y2="42" />
+                    <line x1="70" y1="65" x2="62" y2="35" />
+                    <line x1="30" y1="65" x2="52" y2="65" />
+                    <line x1="52" y1="65" x2="62" y2="35" />
+                    <line x1="48" y1="42" x2="38" y2="65" />
+                    <line x1="62" y1="35" x2="68" y2="35" />
+                    <line x1="48" y1="42" x2="46" y2="38" />
+                    <line x1="42" y1="38" x2="50" y2="38" />
+                </svg>
+                <h3>${isFiltered ? 'Bisiklet Bulunamadı' : 'Henüz Bisiklet Yok'}</h3>
+                <p>${isFiltered ? 'Arama veya filtre kriterlerinize uygun bisiklet kaydı bulunmuyor.' : 'Sisteme ilk bisikleti ekleyerek başlayın.'}</p>
+                ${!isFiltered ? '<button class="btn btn-primary" onclick="openModal(\'add-bike-modal\')">Bisiklet Ekle</button>' : ''}
             </div>
         `;
         return;
@@ -255,7 +302,7 @@ function renderBikesGrid() {
                     let priorityTagClass = '';
                     if (l.priority === 'Dusuk') priorityTagClass = 'priority-dusuk';
                     else if (l.priority === 'Orta') priorityTagClass = 'priority-orta';
-                    else if (l.priority === 'Yuksek') priorityTagClass = 'priority-orta';
+                    else if (l.priority === 'Yuksek') priorityTagClass = 'priority-yuksek';
                     else if (l.priority === 'Kritik') priorityTagClass = 'priority-kritik';
                     
                     return `<span class="bike-tag ${priorityTagClass}" title="${l.desc ? `${l.desc} | ` : ''}Bildiren: ${l.reporter}">${l.title}</span>`;
@@ -393,11 +440,18 @@ function renderLogsList() {
     });
     
     if (filteredLogs.length === 0) {
+        const isFiltered = activeFilter !== 'all' || priorityFilter !== 'all' || searchQuery !== '';
         container.innerHTML = `
             <div class="empty-state">
-                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
-                <h3>Arıza Kaydı Bulunamadı</h3>
-                <p>Aradığınız kriterlere uygun arıza veya bakım kaydı bulunmuyor.</p>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                    <polyline points="14 2 14 8 20 8"/>
+                    <line x1="12" y1="18" x2="12" y2="12"/>
+                    <line x1="9" y1="15" x2="15" y2="15"/>
+                </svg>
+                <h3>${isFiltered ? 'Arıza Kaydı Bulunamadı' : 'Henüz Arıza Kaydı Yok'}</h3>
+                <p>${isFiltered ? 'Aradığınız kriterlere uygun arıza veya bakım kaydı bulunmuyor.' : 'Bir bisiklete ait arıza bildirimi yaparak ilk kaydı oluşturun.'}</p>
+                ${!isFiltered ? '<button class="btn btn-primary" onclick="openModal(\'add-log-modal\')">Arıza Bildir</button>' : ''}
             </div>
         `;
         return;
@@ -542,6 +596,17 @@ function setupEventListeners() {
         document.getElementById('sidebar').classList.toggle('mobile-open');
     });
     
+    // Sidebar collapse toggle
+    document.getElementById('collapse-sidebar').addEventListener('click', () => {
+        document.getElementById('sidebar').classList.toggle('collapsed');
+        document.querySelector('.app-container').classList.toggle('sidebar-collapsed');
+        const btn = document.getElementById('collapse-sidebar');
+        const label = btn.querySelector('span');
+        if (label) {
+            label.textContent = document.getElementById('sidebar').classList.contains('collapsed') ? 'Genişlet' : 'Daralt';
+        }
+    });
+    
     // Link to go to logs from Dashboard
     document.getElementById('btn-go-to-logs').addEventListener('click', () => {
         window.location.hash = '#arizalar';
@@ -592,15 +657,22 @@ function setupEventListeners() {
     
     // Global Search Event
     document.getElementById('global-search').addEventListener('input', () => {
-        if (state.currentSection === 'dashboard-section') {
-            // If in dashboard, search filters the bike list (redirects to bikes list or filters)
-            // Let's filter both pages in the background
-            renderBikesGrid();
-            renderLogsList();
-        } else if (state.currentSection === 'bisikletler-section') {
+        if (state.currentSection === 'dashboard-section') return;
+        if (state.currentSection === 'bisikletler-section') {
             renderBikesGrid();
         } else if (state.currentSection === 'arizalar-section') {
             renderLogsList();
+        }
+    });
+
+    document.getElementById('global-search').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && state.currentSection === 'dashboard-section') {
+            const q = e.target.value.trim();
+            if (q.length > 0) {
+                window.location.hash = '#bisikletler';
+                switchSection('bisikletler-section');
+                renderBikesGrid();
+            }
         }
     });
     
@@ -743,7 +815,7 @@ function setupEventListeners() {
         const selectTitle = document.getElementById('log-title').value;
         const priority = document.getElementById('log-priority').value;
         const reporter = document.getElementById('log-reporter').value.trim();
-        const desc = '';
+        const desc = document.getElementById('log-desc').value.trim();
         
         if (!bikeId) {
             showToast('Lütfen arızalı bisikleti seçin!', 'error');
@@ -898,11 +970,12 @@ function setupEventListeners() {
         if (!log) return;
         
         if (action === 'repair') {
+            if (!confirm('Bu arıza kaydını onarıma almak istediğinize emin misiniz?')) return;
             log.status = 'Onariliyor';
             
-            // Update bike status to maintenance
             const bike = state.bikes.find(b => b.id === log.bikeId);
             if (bike) {
+                prevStatus.bikeStatus = bike.status;
                 bike.status = 'Bakımda';
             }
             
@@ -986,3 +1059,5 @@ window.addEventListener('hashchange', handleRoutingFromHash);
 
 // Start Application on Load
 window.addEventListener('DOMContentLoaded', initApp);
+
+

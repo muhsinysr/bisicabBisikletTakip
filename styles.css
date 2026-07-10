@@ -95,6 +95,65 @@ aside.sidebar {
     transition: var(--transition);
 }
 
+aside.sidebar.collapsed {
+    width: 80px;
+    padding: 2rem 1rem;
+}
+
+aside.sidebar.collapsed .brand-name,
+aside.sidebar.collapsed .nav-item a span,
+aside.sidebar.collapsed .sidebar-footer .user-info,
+aside.sidebar.collapsed .sidebar-footer .collapse-btn span {
+    display: none;
+}
+
+aside.sidebar.collapsed .nav-item a {
+    justify-content: center;
+    padding: 0.85rem;
+}
+
+aside.sidebar.collapsed .brand {
+    justify-content: center;
+}
+
+aside.sidebar.collapsed .user-profile {
+    justify-content: center;
+}
+
+.collapse-btn {
+    background: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--color-text-muted);
+    padding: 0.6rem 1rem;
+    border-radius: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: var(--transition);
+    width: 100%;
+}
+
+.collapse-btn:hover {
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--color-text-main);
+}
+
+.collapse-btn svg {
+    transition: transform 0.3s ease;
+}
+
+aside.sidebar.collapsed .collapse-btn {
+    justify-content: center;
+    padding: 0.6rem;
+}
+
+aside.sidebar.collapsed .collapse-btn svg {
+    transform: rotate(180deg);
+}
+
 .brand {
     display: flex;
     align-items: center;
@@ -163,7 +222,7 @@ aside.sidebar {
 }
 
 .nav-item.active a {
-    background: rgba(5b, 130, 246, 0.1);
+    background: rgba(59, 130, 246, 0.1);
     color: var(--primary);
     border-left: 3px solid var(--primary);
     border-radius: 0 10px 10px 0;
@@ -175,6 +234,9 @@ aside.sidebar {
 }
 
 .sidebar-footer {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
     margin-top: auto;
     padding-top: 1.5rem;
     border-top: 1px solid var(--border-color);
@@ -224,6 +286,10 @@ main.main-content {
     flex-direction: column;
     gap: 2rem;
     transition: var(--transition);
+}
+
+.app-container.sidebar-collapsed main.main-content {
+    margin-left: 80px;
 }
 
 /* Header & Top Bar */
@@ -442,6 +508,9 @@ header.top-header {
 .stat-card.aktif .stat-icon-wrapper { background: rgba(16, 185, 129, 0.1); color: var(--status-aktif); }
 .stat-card.bakimda .stat-icon-wrapper { background: rgba(245, 158, 11, 0.1); color: var(--status-bakimda); }
 .stat-card.arizali .stat-icon-wrapper { background: rgba(239, 68, 68, 0.1); color: var(--status-arizali); }
+.stat-card.cozuldu { border-left: 4px solid var(--status-aktif); }
+.stat-card.cozuldu .stat-icon-wrapper { color: var(--status-aktif); background: rgba(16, 185, 129, 0.1); }
+.stat-card.cozuldu:hover::before { background: var(--status-aktif); }
 
 .stat-icon-wrapper svg {
     width: 24px;
@@ -616,6 +685,7 @@ header.top-header {
     border-radius: 8px;
     font-size: 0.85rem;
     font-weight: 500;
+    outline: none;
     border: 1px solid var(--border-color);
     background: rgba(255, 255, 255, 0.02);
     color: var(--color-text-muted);
@@ -879,6 +949,29 @@ header.top-header {
     gap: 0.5rem;
 }
 
+/* Info Panel */
+.info-panel {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: var(--color-text-muted);
+}
+
+/* Progress bar color variants */
+.progress-bar-fill.active { background-color: var(--status-aktif); }
+.progress-bar-fill.maintenance { background-color: var(--status-bakimda); }
+.progress-bar-fill.broken { background-color: var(--status-arizali); }
+
+.resolve-info-text {
+    margin-bottom: 1.25rem;
+    font-size: 0.9rem;
+    color: var(--color-text-muted);
+}
+
 /* Modals */
 .modal-overlay {
     position: fixed;
@@ -1012,11 +1105,12 @@ header.top-header {
 }
 
 .empty-state svg {
-    width: 64px;
-    height: 64px;
+    width: 72px;
+    height: 72px;
     stroke: var(--color-text-muted);
     stroke-width: 1.5;
     fill: none;
+    opacity: 0.5;
 }
 
 .empty-state h3 {
@@ -1039,6 +1133,11 @@ header.top-header {
     flex-direction: column;
     gap: 0.75rem;
     z-index: 1100;
+    pointer-events: none;
+}
+
+.toast-container .toast {
+    pointer-events: auto;
 }
 
 .toast {
@@ -1076,6 +1175,8 @@ header.top-header {
 }
 
 @media (max-width: 768px) {
+    .collapse-btn { display: none; }
+    
     aside.sidebar {
         transform: translateX(-100%);
         box-shadow: 10px 0 30px rgba(0, 0, 0, 0.5);
@@ -1102,6 +1203,13 @@ header.top-header {
     
     .header-actions {
         justify-content: flex-start;
+    }
+    
+    .toast-container {
+        bottom: auto;
+        top: 1rem;
+        right: 1rem;
+        left: 1rem;
     }
     
     .mobile-menu-toggle {
@@ -1141,8 +1249,8 @@ header.top-header {
 .bikes-grid.list-view .bike-card {
     flex-direction: row;
     align-items: center;
-    padding: 0.75rem 1.25rem;
-    gap: 1.5rem;
+    padding: 0.6rem 1rem;
+    gap: 0.75rem;
 }
 
 .bikes-grid.list-view .bike-card-image {
@@ -1172,8 +1280,8 @@ header.top-header {
     justify-content: space-between;
     width: 100%;
     display: grid;
-    grid-template-columns: 1.5fr 1fr 2fr 1.5fr 1.8fr;
-    gap: 1rem;
+    grid-template-columns: 1.2fr 0.9fr 2fr 1.2fr 2.5fr;
+    gap: 0.5rem;
 }
 
 .bikes-grid.list-view .bike-title {
@@ -1229,6 +1337,13 @@ header.top-header {
     border-color: rgba(59, 130, 246, 0.2);
 }
 
+.bike-tag.priority-yuksek {
+    background: rgba(245, 158, 11, 0.18);
+    color: #f59e0b;
+    border-color: rgba(245, 158, 11, 0.3);
+    box-shadow: 0 0 6px rgba(245, 158, 11, 0.15);
+}
+
 .bike-tag.priority-kritik {
     background: rgba(239, 68, 68, 0.18);
     color: #ef4444;
@@ -1244,14 +1359,14 @@ header.top-header {
 
 .bikes-grid.list-view .bike-card-footer {
     display: flex;
-    gap: 0.5rem;
+    gap: 0.35rem;
     justify-content: flex-end;
 }
 
 .bikes-grid.list-view .bike-card-footer button,
 .bikes-grid.list-view .bike-card-footer .btn {
     flex: 1;
-    max-width: 120px;
+    max-width: 100px;
     justify-content: center;
     text-align: center;
 }
@@ -1268,7 +1383,10 @@ header.top-header {
 /* Mobil ve Tablet Uyumluluğu için Liste Görünümü Güncellemeleri */
 @media (max-width: 1024px) {
     .bikes-grid.list-view .bike-card-body {
-        grid-template-columns: 1.5fr 1fr 2fr 1.5fr 1.8fr;
+        grid-template-columns: 1fr 1fr 1.5fr;
+    }
+    .bikes-grid.list-view .bike-card-body > div:nth-child(4) {
+        display: none;
     }
 }
 
@@ -1329,4 +1447,6 @@ header.top-header {
         margin-top: 0;
     }
 }
+
+/* Lock Screen Styles - removed */
 

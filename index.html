@@ -54,6 +54,13 @@
             </ul>
             
             <div class="sidebar-footer">
+                <button class="collapse-btn" id="collapse-sidebar" title="Sidebar'ı Daralt">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="3" y1="12" x2="15" y2="12"/>
+                        <polyline points="15 6 21 12 15 18"/>
+                    </svg>
+                    <span>Daralt</span>
+                </button>
                 <div class="user-profile">
                     <div class="avatar">MY</div>
                     <div class="user-info">
@@ -139,12 +146,12 @@
                             <svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
                         </div>
                     </div>
-                    <div class="stat-card cozuldu" style="border-left: 4px solid var(--status-aktif);">
+                    <div class="stat-card cozuldu">
                         <div class="stat-info">
                             <span class="stat-label">Giderilen Arızalar</span>
                             <span class="stat-value" id="stat-resolved-logs">0</span>
                         </div>
-                        <div class="stat-icon-wrapper" style="color: var(--status-aktif); background: rgba(16, 185, 129, 0.1);">
+                        <div class="stat-icon-wrapper">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
                         </div>
                     </div>
@@ -180,7 +187,7 @@
                                     <span id="active-percentage">0%</span>
                                 </div>
                                 <div class="progress-bar-bg">
-                                    <div class="progress-bar-fill" id="active-progress-bar" style="background-color: var(--status-aktif); width: 0%;"></div>
+                                    <div class="progress-bar-fill active" id="active-progress-bar" style="width: 0%;"></div>
                                 </div>
                             </div>
                             <div class="progress-item">
@@ -189,7 +196,7 @@
                                     <span id="maintenance-percentage">0%</span>
                                 </div>
                                 <div class="progress-bar-bg">
-                                    <div class="progress-bar-fill" id="maintenance-progress-bar" style="background-color: var(--status-bakimda); width: 0%;"></div>
+                                    <div class="progress-bar-fill maintenance" id="maintenance-progress-bar" style="width: 0%;"></div>
                                 </div>
                             </div>
                             <div class="progress-item">
@@ -198,12 +205,12 @@
                                     <span id="broken-percentage">0%</span>
                                 </div>
                                 <div class="progress-bar-bg">
-                                    <div class="progress-bar-fill" id="broken-progress-bar" style="background-color: var(--status-arizali); width: 0%;"></div>
+                                    <div class="progress-bar-fill broken" id="broken-progress-bar" style="width: 0%;"></div>
                                 </div>
                             </div>
                         </div>
 
-                        <div style="margin-top: 1.5rem; padding: 1rem; background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-color); border-radius: 12px; font-size: 0.85rem; line-height: 1.5; color: var(--color-text-muted);">
+                        <div class="info-panel">
                             <strong>Bilgi Paneli:</strong> Arıza durumunu güncellediğinizde, ilgili bisikletin durumu sistem tarafından otomatik olarak güncellenir. Bir arıza giderildiğinde bisiklet tekrar <strong>Kullanılabilir</strong> statüsüne geçer.
                         </div>
                     </div>
@@ -269,12 +276,12 @@
                         <span class="filter-label">Kayıt Durumu:</span>
                         <button class="filter-btn active" data-log-filter="all">Tümü</button>
                         <button class="filter-btn" data-log-filter="Bildirildi">Bildirildi</button>
-                        <button class="filter-btn" data-log-filter="Onarılıyor">Onarımda</button>
+                        <button class="filter-btn" data-log-filter="Onariliyor">Onarımda</button>
                         <button class="filter-btn" data-log-filter="Cozuldu">Çözüldü</button>
                     </div>
                     <div class="filter-group">
                         <span class="filter-label">Öncelik:</span>
-                        <select id="log-priority-filter" class="filter-btn" style="outline: none;">
+                        <select id="log-priority-filter" class="filter-btn">
                             <option value="all">Tüm Öncelikler</option>
                             <option value="Dusuk">Düşük</option>
                             <option value="Orta">Orta</option>
@@ -385,6 +392,10 @@
                         <label for="log-new-title">Yeni Arıza Başlığı Yazın</label>
                         <input type="text" id="log-new-title" placeholder="Örn: Sele amortisörü gevşek veya kırık">
                     </div>
+                    <div class="form-group">
+                        <label for="log-desc">Arıza Açıklaması</label>
+                        <textarea id="log-desc" placeholder="Arızanın detaylı açıklaması..."></textarea>
+                    </div>
                     <div class="form-row">
                         <div class="form-group">
                             <label for="log-priority">Öncelik Seviyesi</label>
@@ -419,7 +430,7 @@
             <form id="resolve-log-form">
                 <input type="hidden" id="resolve-log-id">
                 <div class="modal-body">
-                    <p style="margin-bottom: 1.25rem; font-size: 0.9rem; color: var(--color-text-muted);" id="resolve-log-info-text">
+                    <p class="resolve-info-text" id="resolve-log-info-text">
                         Seçilen arıza kaydını kapatmak ve ilgili bisikleti tekrar 'Kullanılabilir' durumuna getirmek üzeresiniz.
                     </p>
                     <div class="form-group" id="group-resolve-log-select" style="display: none; margin-bottom: 1.25rem;">
