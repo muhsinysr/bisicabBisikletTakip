@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bisicab - Bisiklet & Arıza Takip Sistemi</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="brand">
+                <div class="brand-logo">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M19 18c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm-14 0c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm13.12-10h-2.92l-1.42-3.13C13.48 4.34 13 4 12.47 4H8v2h4.47l1.09 2.4-4.52 5.09-3.08-3.08c-.39-.39-1.02-.39-1.41 0l-2.12 2.12 1.41 1.41 1.42-1.41 2.37 2.37c.39.39 1.02.39 1.41 0l5.8-6.52 1.76 3.86c.19.42.6.7.19.7H19V8z"/>
+                    </svg>
+                </div>
+                <span class="brand-name">Bisicab Takip</span>
+            </div>
+            
+            <ul class="nav-menu">
+                <li class="nav-item active" data-target="dashboard-section">
+                    <a href="#dashboard">
+                        <svg viewBox="0 0 24 24">
+                            <rect x="3" y="3" width="7" height="9" rx="1" />
+                            <rect x="14" y="3" width="7" height="5" rx="1" />
+                            <rect x="14" y="12" width="7" height="9" rx="1" />
+                            <rect x="3" y="16" width="7" height="5" rx="1" />
+                        </svg>
+                        Genel Durum
+                    </a>
+                </li>
+                <li class="nav-item" data-target="bisikletler-section">
+                    <a href="#bisikletler">
+                        <svg viewBox="0 0 24 24">
+                            <circle cx="5.5" cy="17.5" r="2.5"/>
+                            <circle cx="18.5" cy="17.5" r="2.5"/>
+                            <path d="M15 8l-3.5 5.5H8.5L12 8zM5.5 17.5L9 11.5l3.5 6M18.5 17.5H16L12.5 10l-3.5 7.5"/>
+                            <path d="M12.5 10V6h-3V4h5v6z"/>
+                        </svg>
+                        Bisikletler
+                    </a>
+                </li>
+                <li class="nav-item" data-target="arizalar-section">
+                    <a href="#arizalar">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 2.18L8.6 12.6a1 1 0 0 0 0 1.4l1.4 1.4a1 1 0 0 0 1.4 0l4.9-4.9a6 6 0 0 1 2.18-7.94L14.7 6.3z"/>
+                            <path d="M11 21v-4a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v4zM11 5V3H5v2zM5.3 11.3l-1.4 1.4 3.2 3.2 1.4-1.4z"/>
+                        </svg>
+                        Arıza Kayıtları
+                    </a>
+                </li>
+            </ul>
+            
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <div class="avatar">MY</div>
+                    <div class="user-info">
+                        <span class="user-name">Muhsin Yaşar</span>
+                        <span class="user-role">Sistem Yöneticisi</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Top Header -->
+            <header class="top-header">
+                <div class="search-bar">
+                    <svg viewBox="0 0 24 24">
+                        <circle cx="11" cy="11" r="8"/>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                    </svg>
+                    <input type="text" id="global-search" placeholder="Bisiklet model, seri no veya arıza ara...">
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-secondary" id="btn-open-add-bike">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="5" x2="12" y2="19"/>
+                            <line x1="5" y1="12" x2="19" y2="12"/>
+                        </svg>
+                        Bisiklet Ekle
+                    </button>
+                    <button class="btn btn-primary" id="btn-open-add-log">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                            <line x1="12" y1="9" x2="12" y2="13"/>
+                            <line x1="12" y1="17" x2="12.01" y2="17"/>
+                        </svg>
+                        Arıza Bildir
+                    </button>
+                </div>
+            </header>
+
+            <!-- Dashboard Section -->
+            <section id="dashboard-section" class="content-section active-section">
+                <div class="page-title-area">
+                    <h1>Genel Durum</h1>
+                    <p>Sistemdeki bisikletlerin ve arıza kayıtlarının anlık durum grafiği</p>
+                </div>
+
+                <!-- Stats Grid -->
+                <div class="stats-grid">
+                    <div class="stat-card total">
+                        <div class="stat-info">
+                            <span class="stat-label">Toplam Bisiklet</span>
+                            <span class="stat-value" id="stat-total-bikes">0</span>
+                        </div>
+                        <div class="stat-icon-wrapper">
+                            <svg viewBox="0 0 24 24"><path d="M19 18c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm-14 0c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm13.12-10H5v2h13.12z"/></svg>
+                        </div>
+                    </div>
+                    <div class="stat-card aktif">
+                        <div class="stat-info">
+                            <span class="stat-label">Kullanılabilir</span>
+                            <span class="stat-value" id="stat-active-bikes">0</span>
+                        </div>
+                        <div class="stat-icon-wrapper">
+                            <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                        </div>
+                    </div>
+                    <div class="stat-card bakimda">
+                        <div class="stat-info">
+                            <span class="stat-label">Bakımda / Onarımda</span>
+                            <span class="stat-value" id="stat-maintenance-bikes">0</span>
+                        </div>
+                        <div class="stat-icon-wrapper">
+                            <svg viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 2.18L8.6 12.6a1 1 0 0 0 0 1.4l1.4 1.4a1 1 0 0 0 1.4 0l4.9-4.9a6 6 0 0 1 2.18-7.94L14.7 6.3z"/></svg>
+                        </div>
+                    </div>
+                    <div class="stat-card arizali">
+                        <div class="stat-info">
+                            <span class="stat-label">Arızalı / Çevrimdışı</span>
+                            <span class="stat-value" id="stat-broken-bikes">0</span>
+                        </div>
+                        <div class="stat-icon-wrapper">
+                            <svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                        </div>
+                    </div>
+                    <div class="stat-card cozuldu" style="border-left: 4px solid var(--status-aktif);">
+                        <div class="stat-info">
+                            <span class="stat-label">Giderilen Arızalar</span>
+                            <span class="stat-value" id="stat-resolved-logs">0</span>
+                        </div>
+                        <div class="stat-icon-wrapper" style="color: var(--status-aktif); background: rgba(16, 185, 129, 0.1);">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dashboard Grid -->
+                <div class="dashboard-grid">
+                    <!-- Left: Recent Timeline -->
+                    <div class="dashboard-panel">
+                        <div class="panel-header">
+                            <h2>Son Bakım ve Arıza Kayıtları</h2>
+                            <button class="btn btn-secondary btn-icon" id="btn-go-to-logs">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="5" y1="12" x2="19" y2="12"/>
+                                    <polyline points="12 5 19 12 12 19"/>
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="timeline" id="recent-logs-timeline">
+                            <!-- JS ile doldurulacak -->
+                        </div>
+                    </div>
+
+                    <!-- Right: Quick Health Status -->
+                    <div class="dashboard-panel">
+                        <div class="panel-header">
+                            <h2>Filo Sağlık Dağılımı</h2>
+                        </div>
+                        <div class="progress-list">
+                            <div class="progress-item">
+                                <div class="progress-info">
+                                    <span>Kullanılabilirlik Oranı</span>
+                                    <span id="active-percentage">0%</span>
+                                </div>
+                                <div class="progress-bar-bg">
+                                    <div class="progress-bar-fill" id="active-progress-bar" style="background-color: var(--status-aktif); width: 0%;"></div>
+                                </div>
+                            </div>
+                            <div class="progress-item">
+                                <div class="progress-info">
+                                    <span>Bakım / Onarım Oranı</span>
+                                    <span id="maintenance-percentage">0%</span>
+                                </div>
+                                <div class="progress-bar-bg">
+                                    <div class="progress-bar-fill" id="maintenance-progress-bar" style="background-color: var(--status-bakimda); width: 0%;"></div>
+                                </div>
+                            </div>
+                            <div class="progress-item">
+                                <div class="progress-info">
+                                    <span>Arızalı Durum Oranı</span>
+                                    <span id="broken-percentage">0%</span>
+                                </div>
+                                <div class="progress-bar-bg">
+                                    <div class="progress-bar-fill" id="broken-progress-bar" style="background-color: var(--status-arizali); width: 0%;"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 1.5rem; padding: 1rem; background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-color); border-radius: 12px; font-size: 0.85rem; line-height: 1.5; color: var(--color-text-muted);">
+                            <strong>Bilgi Paneli:</strong> Arıza durumunu güncellediğinizde, ilgili bisikletin durumu sistem tarafından otomatik olarak güncellenir. Bir arıza giderildiğinde bisiklet tekrar <strong>Kullanılabilir</strong> statüsüne geçer.
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Bicycles Section -->
+            <section id="bisikletler-section" class="content-section">
+                <div class="page-title-area">
+                    <h1>Bisiklet Filosu</h1>
+                    <p>Sistemdeki tüm fiziksel bisikletlerin durumunu yönetin</p>
+                </div>
+
+                <!-- Filters -->
+                <div class="filters-panel">
+                    <div class="filter-group">
+                        <span class="filter-label">Durum Filtresi:</span>
+                        <button class="filter-btn active" data-filter="all">Tümü</button>
+                        <button class="filter-btn" data-filter="Kullanılabilir">Kullanılabilir</button>
+                        <button class="filter-btn" data-filter="Bakımda">Bakımda</button>
+                        <button class="filter-btn" data-filter="Arızalı">Arızalı</button>
+                    </div>
+
+                    <div class="filter-group">
+                        <span class="filter-label">Görünüm:</span>
+                        <button class="filter-btn btn-icon" id="btn-view-grid" title="Kart Görünümü">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="3" width="7" height="7"></rect>
+                                <rect x="14" y="3" width="7" height="7"></rect>
+                                <rect x="14" y="14" width="7" height="7"></rect>
+                                <rect x="3" y="14" width="7" height="7"></rect>
+                            </svg>
+                        </button>
+                        <button class="filter-btn btn-icon active" id="btn-view-list" title="Liste Görünümü">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="8" y1="6" x2="21" y2="6"></line>
+                                <line x1="8" y1="12" x2="21" y2="12"></line>
+                                <line x1="8" y1="18" x2="21" y2="18"></line>
+                                <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                                <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                                <line x1="3" y1="18" x2="3.01" y2="18"></line>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Bikes Grid -->
+                <div class="bikes-grid" id="bikes-grid">
+                    <!-- JS ile doldurulacak -->
+                </div>
+            </section>
+
+            <!-- Maintenance Logs Section -->
+            <section id="arizalar-section" class="content-section">
+                <div class="page-title-area">
+                    <h1>Arıza & Bakım Kayıtları</h1>
+                    <p>Bisikletlerin arıza geçmişini ve güncel onarım durumlarını izleyin</p>
+                </div>
+
+                <!-- Filters -->
+                <div class="filters-panel">
+                    <div class="filter-group">
+                        <span class="filter-label">Kayıt Durumu:</span>
+                        <button class="filter-btn active" data-log-filter="all">Tümü</button>
+                        <button class="filter-btn" data-log-filter="Bildirildi">Bildirildi</button>
+                        <button class="filter-btn" data-log-filter="Onarılıyor">Onarımda</button>
+                        <button class="filter-btn" data-log-filter="Cozuldu">Çözüldü</button>
+                    </div>
+                    <div class="filter-group">
+                        <span class="filter-label">Öncelik:</span>
+                        <select id="log-priority-filter" class="filter-btn" style="outline: none;">
+                            <option value="all">Tüm Öncelikler</option>
+                            <option value="Dusuk">Düşük</option>
+                            <option value="Orta">Orta</option>
+                            <option value="Yuksek">Yüksek</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Logs List -->
+                <div class="logs-list" id="logs-list">
+                    <!-- JS ile doldurulacak -->
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modal: Add Bike -->
+    <div class="modal-overlay" id="add-bike-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Yeni Bisiklet Ekle</h3>
+                <button class="modal-close" data-close="add-bike-modal">&times;</button>
+            </div>
+            <form id="add-bike-form">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="bike-model">Bisiklet Numarası</label>
+                        <input type="number" id="bike-model" min="1" placeholder="Boş bırakılırsa otomatik sıradaki numara atanır (Örn: 8)">
+                    </div>
+                    <div class="form-group">
+                        <label for="bike-status">Başlangıç Durumu</label>
+                        <select id="bike-status">
+                            <option value="Kullanılabilir">Kullanılabilir</option>
+                            <option value="Bakımda">Bakımda / Onarımda</option>
+                            <option value="Arızalı">Arızalı / Çevrimdışı</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="bike-desc">Açıklama / Notlar</label>
+                        <textarea id="bike-desc" placeholder="Bisiklet hakkında eklemek istediğiniz diğer notlar..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-close="add-bike-modal">Vazgeç</button>
+                    <button type="submit" class="btn btn-primary">Kaydet</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Edit Bike -->
+    <div class="modal-overlay" id="edit-bike-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Bisiklet Bilgilerini Düzenle</h3>
+                <button class="modal-close" data-close="edit-bike-modal">&times;</button>
+            </div>
+            <form id="edit-bike-form">
+                <input type="hidden" id="edit-bike-id">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="edit-bike-model">Bisiklet Numarası</label>
+                        <input type="number" id="edit-bike-model" min="1" placeholder="Boş bırakılırsa değişmeden kalır">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-bike-status">Durum</label>
+                        <select id="edit-bike-status">
+                            <option value="Kullanılabilir">Kullanılabilir</option>
+                            <option value="Bakımda">Bakımda</option>
+                            <option value="Arızalı">Arızalı</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-bike-desc">Açıklama / Notlar</label>
+                        <textarea id="edit-bike-desc" placeholder="Bisiklet hakkında eklemek istediğiniz diğer notlar..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-close="edit-bike-modal">Vazgeç</button>
+                    <button type="submit" class="btn btn-primary">Değişiklikleri Kaydet</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Add Maintenance Log -->
+    <div class="modal-overlay" id="add-log-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Arıza / Bakım Kaydı Bildir</h3>
+                <button class="modal-close" data-close="add-log-modal">&times;</button>
+            </div>
+            <form id="add-log-form">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="log-bike-id">Arızalı Bisiklet</label>
+                        <select id="log-bike-id" required>
+                            <!-- Dinamik bisiklet seçenekleri -->
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="log-title">Arıza Başlığı / Sorun Nedir?</label>
+                        <select id="log-title" required>
+                            <!-- JS ile dinamik seçenekler doldurulacak -->
+                        </select>
+                    </div>
+                    <div class="form-group" id="group-log-new-title" style="display: none;">
+                        <label for="log-new-title">Yeni Arıza Başlığı Yazın</label>
+                        <input type="text" id="log-new-title" placeholder="Örn: Sele amortisörü gevşek veya kırık">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="log-priority">Öncelik Seviyesi</label>
+                            <select id="log-priority" required>
+                                <option value="Dusuk">Düşük (Kullanımı etkilemiyor)</option>
+                                <option value="Orta">Orta (Kısmi sorunlar)</option>
+                                <option value="Yuksek">Yüksek (Kullanılamaz durumda)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="log-reporter">Bildiren Personel</label>
+                            <input type="text" id="log-reporter" required placeholder="Örn: Ahmet Yılmaz">
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-close="add-log-modal">Vazgeç</button>
+                    <button type="submit" class="btn btn-primary">Kaydet ve Bildir</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Resolve Maintenance Log -->
+    <div class="modal-overlay" id="resolve-log-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Arıza Kaydını Çözümle</h3>
+                <button class="modal-close" data-close="resolve-log-modal">&times;</button>
+            </div>
+            <form id="resolve-log-form">
+                <input type="hidden" id="resolve-log-id">
+                <div class="modal-body">
+                    <p style="margin-bottom: 1.25rem; font-size: 0.9rem; color: var(--color-text-muted);" id="resolve-log-info-text">
+                        Seçilen arıza kaydını kapatmak ve ilgili bisikleti tekrar 'Kullanılabilir' durumuna getirmek üzeresiniz.
+                    </p>
+                    <div class="form-group" id="group-resolve-log-select" style="display: none; margin-bottom: 1.25rem;">
+                        <label for="resolve-log-select">Çözülen Arıza Kaydı</label>
+                        <select id="resolve-log-select" required>
+                            <!-- Dinamik aktif arızalar -->
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="resolve-notes">Uygulanan Onarım / Çözüm Notları</label>
+                        <textarea id="resolve-notes" required placeholder="Örn: Arka vites aktarıcı yenisiyle değiştirildi ve vites ayarları yapıldı."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-close="resolve-log-modal">Vazgeç</button>
+                    <button type="submit" class="btn btn-primary">Kaydı Kapat (Çözüldü)</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- Mobile Navigation Toggle Button -->
+    <button class="mobile-menu-toggle" id="mobile-menu-toggle">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="3" y1="12" x2="21" y2="12"/>
+            <line x1="3" y1="6" x2="21" y2="6"/>
+            <line x1="3" y1="18" x2="21" y2="18"/>
+        </svg>
+    </button>
+
+    <script src="app.js"></script>
+</body>
+</html>
