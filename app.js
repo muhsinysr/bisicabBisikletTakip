@@ -257,7 +257,7 @@ function renderBikesGrid() {
                     else if (l.priority === 'Yuksek') priorityTagClass = 'priority-orta';
                     else if (l.priority === 'Kritik') priorityTagClass = 'priority-kritik';
                     
-                    return `<span class="bike-tag ${priorityTagClass}" title="${l.desc}">${l.title}</span>`;
+                    return `<span class="bike-tag ${priorityTagClass}" title="${l.desc ? `${l.desc} | ` : ''}Bildiren: ${l.reporter}">${l.title} (${l.reporter})</span>`;
                 }).join('');
             } else {
                 tagsHtml = '<span class="bike-tag no-issue">Arıza Yok</span>';
