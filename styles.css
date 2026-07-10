@@ -1172,7 +1172,7 @@ header.top-header {
     justify-content: space-between;
     width: 100%;
     display: grid;
-    grid-template-columns: 1.8fr 1.2fr 2.5fr 1.8fr;
+    grid-template-columns: 1.5fr 1fr 2fr 1.5fr 1.8fr;
     gap: 1rem;
 }
 
@@ -1268,7 +1268,7 @@ header.top-header {
 /* Mobil ve Tablet Uyumluluğu için Liste Görünümü Güncellemeleri */
 @media (max-width: 1024px) {
     .bikes-grid.list-view .bike-card-body {
-        grid-template-columns: 1.5fr 1.2fr 2.5fr 1.8fr;
+        grid-template-columns: 1.5fr 1fr 2fr 1.5fr 1.8fr;
     }
 }
 

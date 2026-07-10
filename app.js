@@ -249,6 +249,7 @@ function renderBikesGrid() {
         if (state.viewMode === 'list') {
             // Aktif arızaları tag haline getirme
             let tagsHtml = '';
+            let reporterText = '-';
             if (activeLogs.length > 0) {
                 tagsHtml = activeLogs.map(l => {
                     let priorityTagClass = '';
@@ -257,8 +258,11 @@ function renderBikesGrid() {
                     else if (l.priority === 'Yuksek') priorityTagClass = 'priority-orta';
                     else if (l.priority === 'Kritik') priorityTagClass = 'priority-kritik';
                     
-                    return `<span class="bike-tag ${priorityTagClass}" title="${l.desc ? `${l.desc} | ` : ''}Bildiren: ${l.reporter}">${l.title} (${l.reporter})</span>`;
+                    return `<span class="bike-tag ${priorityTagClass}" title="${l.desc ? `${l.desc} | ` : ''}Bildiren: ${l.reporter}">${l.title}</span>`;
                 }).join('');
+                
+                const reporters = [...new Set(activeLogs.map(l => l.reporter).filter(Boolean))];
+                reporterText = reporters.length > 0 ? reporters.join(', ') : '-';
             } else {
                 tagsHtml = '<span class="bike-tag no-issue">Arıza Yok</span>';
             }
@@ -290,6 +294,9 @@ function renderBikesGrid() {
                     </div>
                     <div class="bike-tags-list">
                         ${tagsHtml}
+                    </div>
+                    <div class="bike-reporter-list" style="font-size: 0.85rem; color: var(--color-text-muted); font-weight: 500;" title="Arızayı Bildiren Personel">
+                        ${reporterText}
                     </div>
                     <div class="bike-card-footer">
                         <button class="btn btn-secondary btn-quick-report" data-id="${bike.id}">Arıza Bildir</button>
